@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="mt-4 mb-4">Admin Dashboard</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total Tickets</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ tickets|length }}</h5>
+                    <p class="card-text">Overall tickets in the system.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Open Tickets</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ open_tickets }}</h5>
+                    <p class="card-text">Currently awaiting action.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Resolved Tickets</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ resolved_tickets }}</h5>
+                    <p class="card-text">Successfully closed tickets.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Ticket Status Overview</div>
+                <div class="card-body">
+                    <canvas id="ticketStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">System Users</div>
+                <div class="card-body">
+                    <p>Total Users: <strong>{{ users_count }}</strong></p>
+                    <p>Total Agents: <strong>{{ agents_count }}</strong></p>
+                    <a href="{{ url_for('manage_users') }}" class="btn btn-outline-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h3 class="mb-3">All Tickets</h3>
+    {% if tickets %}
+        <div class="list-group">
+            {% for ticket in tickets %}
+                <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="list-group-item list-group-item-action mb-2">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ ticket.title }}</h5>
+                        <small class="text-muted">ID: {{ ticket.id }} | Submitted: {{ ticket.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                    <p class="mb-1">Status: <span class="badge 
+                        {% if ticket.status == 'Open' %}bg-secondary
+                        {% elif ticket.status == 'In Progress' %}bg-info
+                        {% elif ticket.status == 'Resolved' %}bg-success
+                        {% elif ticket.status == 'Closed' %}bg-dark
+                        {% endif %}">{{ ticket.status }}</span></p>
+                    <small class="text-muted">By: {{ ticket.author.username }} | Assigned: {{ ticket.agent.username if ticket.agent else 'None' }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No tickets in the system.</p>
+    {% endif %}
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('ticketStatusChart').getContext('2d');
+            // FIX: Wrap the Jinja2 |tojson output in quotes and then parse it
+            var ticketStatusData = JSON.parse('{{ ticket_status_data | tojson | safe }}');
+            var labels = Object.keys(ticketStatusData);
+            var data = Object.values(ticketStatusData);
+
+            var ticketStatusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#6c757d', // Open - secondary
+                            '#17a2b8', // In Progress - info
+                            '#28a745', // Resolved - success
+                            '#343a40'  // Closed - dark
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Current Ticket Status Distribution'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock content %}
+               

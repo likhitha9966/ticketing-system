@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="mt-4 mb-4">Manage Users</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Agent</th>
+                <th scope="col">Admin</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <th scope="row">{{ user.id }}</th>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <span class="badge {% if user.is_agent %}bg-success{% else %}bg-danger{% endif %}">
+                        {{ 'Yes' if user.is_agent else 'No' }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge {% if user.is_admin %}bg-success{% else %}bg-danger{% endif %}">
+                        {{ 'Yes' if user.is_admin else 'No' }}
+                    </span>
+                </td>
+                <td>
+                    {% if user.id != current_user.id %} {# Prevent self-demotion/promotion #}
+                        <form action="{{ url_for('toggle_agent_status', user_id=user.id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-{% if user.is_agent %}warning{% else %}success{% endif %}">
+                                {{ 'Demote to User' if user.is_agent else 'Promote to Agent' }}
+                            </button>
+                        </form>
+                        <form action="{{ url_for('toggle_admin_status', user_id=user.id) }}" method="POST" class="d-inline ms-2">
+                            <button type="submit" class="btn btn-sm btn-{% if user.is_admin %}warning{% else %}success{% endif %}">
+                                {{ 'Demote to User' if user.is_admin else 'Promote to Admin' }}
+                            </button>
+                        </form>
+                    {% else %}
+                        <span class="text-muted">Cannot manage self</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="jumbotron text-center mt-5">
+        <h1 class="display-4">Welcome to the Customer Support Ticketing System!</h1>
+        <p class="lead">Log in or register to submit and track your support tickets.</p>
+        <hr class="my-4">
+        <p>If you're a support agent or administrator, please log in with your credentials to manage tickets.</p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('login') }}" role="button">Login</a>
+        <a class="btn btn-secondary btn-lg" href="{{ url_for('register') }}" role="button">Register</a>
+    </div>
+{% endblock content %}

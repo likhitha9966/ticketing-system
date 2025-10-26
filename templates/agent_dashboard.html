@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="mt-4 mb-4">Agent Dashboard</h2>
+    <p class="lead">Tickets assigned to you or currently unassigned.</p>
+    {% if tickets %}
+        <div class="list-group">
+            {% for ticket in tickets %}
+                <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="list-group-item list-group-item-action mb-2">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ ticket.title }}</h5>
+                        <small class="text-muted">{{ ticket.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                    <p class="mb-1">Status: <span class="badge 
+                        {% if ticket.status == 'Open' %}bg-secondary
+                        {% elif ticket.status == 'In Progress' %}bg-info
+                        {% elif ticket.status == 'Resolved' %}bg-success
+                        {% elif ticket.status == 'Closed' %}bg-dark
+                        {% endif %}">{{ ticket.status }}</span></p>
+                    <p class="mb-1">Assigned to: {{ ticket.agent.username if ticket.agent else 'Unassigned' }}</p>
+                    <small class="text-muted">Submitted by: {{ ticket.author.username }} ({{ ticket.author.email }})</small>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No tickets assigned or available.</p>
+    {% endif %}
+{% endblock content %}

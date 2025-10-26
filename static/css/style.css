@@ -1,0 +1,29 @@
+body {
+    background: #f8f9fa;
+    color: #333;
+}
+
+.content-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.badge {
+    padding: 0.4em 0.6em;
+    font-size: 0.8em;
+}
+
+/* Optional: Add some space between flash messages and content */
+.container > .alert {
+    margin-bottom: 1.5rem;
+}
