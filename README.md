@@ -195,5 +195,3 @@ Before you begin, ensure you have the following installed on your system:
 
 *   **Admin/Agent Dashboard (All Tickets View):**
     ![Admin Dashboard Screenshot](screenshots/admin_dashboard_all_tickets.png)
-
-*   **Home Page:**
